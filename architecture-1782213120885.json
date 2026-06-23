@@ -1,0 +1,571 @@
+{
+  "version": "1.0",
+  "diagramId": "exported",
+  "title": "Architecture Diagram",
+  "nodes": [
+    {
+      "id": "on-call-dashboard",
+      "type": "frontend",
+      "label": "On-Call Dashboard",
+      "generic_name": "incident dashboard",
+      "ports": [
+        {
+          "id": "api-in-out",
+          "label": "API/WS",
+          "side": "bottom"
+        }
+      ],
+      "data": {
+        "tech": [
+          "react",
+          "typescript",
+          "websocket",
+          "rest-api"
+        ]
+      }
+    },
+    {
+      "id": "mastra-orchestrator",
+      "type": "service",
+      "label": "Mastra Orchestrator",
+      "generic_name": "agent orchestrator",
+      "ports": [
+        {
+          "id": "api-in",
+          "label": "API In",
+          "side": "left"
+        },
+        {
+          "id": "agent-io",
+          "label": "Agents",
+          "side": "right"
+        }
+      ],
+      "data": {
+        "tech": [
+          "typescript",
+          "mastra-sdk",
+          "node.js"
+        ]
+      }
+    },
+    {
+      "id": "triage-agent",
+      "type": "service",
+      "label": "Triage Agent",
+      "generic_name": "triage agent",
+      "ports": [
+        {
+          "id": "orch-io",
+          "label": "Orchestrator",
+          "side": "left"
+        },
+        {
+          "id": "qdrant-out",
+          "label": "Qdrant",
+          "side": "right"
+        }
+      ],
+      "data": {
+        "tech": [
+          "typescript",
+          "mastra-sdk",
+          "node.js"
+        ]
+      }
+    },
+    {
+      "id": "remediation-agent",
+      "type": "service",
+      "label": "Remediation Agent",
+      "generic_name": "remediation agent",
+      "ports": [
+        {
+          "id": "orch-io",
+          "label": "Orchestrator",
+          "side": "left"
+        },
+        {
+          "id": "qdrant-out",
+          "label": "Qdrant",
+          "side": "right"
+        },
+        {
+          "id": "approval-io",
+          "label": "Approval",
+          "side": "top"
+        },
+        {
+          "id": "enkrypt-out",
+          "label": "Safety Check",
+          "side": "bottom"
+        }
+      ],
+      "data": {
+        "tech": [
+          "typescript",
+          "mastra-sdk",
+          "node.js",
+          "kubectl",
+          "datadog-api"
+        ]
+      }
+    },
+    {
+      "id": "post-mortem-agent",
+      "type": "service",
+      "label": "Post-Mortem Agent",
+      "generic_name": "post-mortem agent",
+      "ports": [
+        {
+          "id": "orch-io",
+          "label": "Orchestrator",
+          "side": "left"
+        },
+        {
+          "id": "qdrant-out",
+          "label": "Qdrant",
+          "side": "right"
+        },
+        {
+          "id": "enkrypt-out",
+          "label": "Safety Check",
+          "side": "bottom"
+        }
+      ],
+      "data": {
+        "tech": [
+          "typescript",
+          "mastra-sdk",
+          "node.js"
+        ]
+      }
+    },
+    {
+      "id": "enkrypt-ai-safety",
+      "type": "service",
+      "label": "Enkrypt AI Safety",
+      "generic_name": "safety guardrails",
+      "ports": [
+        {
+          "id": "eval-in-1",
+          "label": "Command Eval",
+          "side": "top"
+        },
+        {
+          "id": "eval-in-2",
+          "label": "Draft Eval",
+          "side": "top"
+        }
+      ],
+      "data": {
+        "tech": [
+          "typescript",
+          "enkrypt-ai-sdk",
+          "node.js"
+        ],
+        "isolated": true
+      }
+    },
+    {
+      "id": "external-integrations-hub",
+      "type": "api-gateway",
+      "label": "External Integrations Hub",
+      "generic_name": "external tools",
+      "ports": [
+        {
+          "id": "webhook-out",
+          "label": "Webhooks",
+          "side": "right"
+        }
+      ],
+      "data": {
+        "description": "External monitoring and incident management platforms.",
+        "tech": [
+          "pagerduty-api",
+          "grafana-api",
+          "slack-api",
+          "github-api",
+          "datadog-api",
+          "kubernetes-api"
+        ],
+        "isolated": false
+      }
+    },
+    {
+      "id": "backend-api",
+      "type": "service",
+      "label": "Backend API",
+      "generic_name": "api server",
+      "ports": [
+        {
+          "id": "client-io",
+          "label": "Client IO",
+          "side": "top"
+        },
+        {
+          "id": "webhook-in",
+          "label": "Webhooks",
+          "side": "left"
+        },
+        {
+          "id": "orch-out",
+          "label": "Orchestrator",
+          "side": "right"
+        },
+        {
+          "id": "approval-io",
+          "label": "Approval Flow",
+          "side": "bottom"
+        }
+      ],
+      "data": {
+        "description": "Handles webhooks, dashboard API, and WebSocket updates.",
+        "tech": [
+          "node.js",
+          "express",
+          "typescript",
+          "websocket"
+        ],
+        "isolated": false
+      }
+    },
+    {
+      "id": "qdrant-incidents",
+      "type": "database",
+      "label": "incidents_collection",
+      "generic_name": "vector collection",
+      "ports": [
+        {
+          "id": "in-out",
+          "label": "Query/Upsert",
+          "side": "left"
+        }
+      ],
+      "data": {
+        "tech": [
+          "qdrant",
+          "hybrid-search"
+        ]
+      }
+    },
+    {
+      "id": "qdrant-runbooks",
+      "type": "database",
+      "label": "runbooks_collection",
+      "generic_name": "vector collection",
+      "ports": [
+        {
+          "id": "in-out",
+          "label": "Query/Upsert",
+          "side": "left"
+        }
+      ],
+      "data": {
+        "tech": [
+          "qdrant",
+          "hybrid-search"
+        ]
+      }
+    },
+    {
+      "id": "qdrant-postmortems",
+      "type": "database",
+      "label": "postmortems_collection",
+      "generic_name": "vector collection",
+      "ports": [
+        {
+          "id": "in-out",
+          "label": "Query/Upsert",
+          "side": "left"
+        }
+      ],
+      "data": {
+        "tech": [
+          "qdrant",
+          "hybrid-search"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "pd-to-mastra",
+      "source": {
+        "nodeId": "external-integrations-hub",
+        "portId": "webhook-out"
+      },
+      "target": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "webhook-in"
+      },
+      "type": "http",
+      "label": null
+    },
+    {
+      "id": "ui-to-mastra",
+      "source": {
+        "nodeId": "on-call-dashboard",
+        "portId": "api-out"
+      },
+      "target": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "ui-in"
+      },
+      "type": "http",
+      "label": null
+    },
+    {
+      "id": "orch-to-triage",
+      "source": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "agent-io"
+      },
+      "target": {
+        "nodeId": "triage-agent",
+        "portId": "orch-io"
+      },
+      "type": "internal-api",
+      "label": "Triage Task"
+    },
+    {
+      "id": "orch-to-remediation",
+      "source": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "agent-io"
+      },
+      "target": {
+        "nodeId": "remediation-agent",
+        "portId": "orch-io"
+      },
+      "type": "internal-api",
+      "label": "Remediation Task"
+    },
+    {
+      "id": "orch-to-postmortem",
+      "source": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "agent-io"
+      },
+      "target": {
+        "nodeId": "post-mortem-agent",
+        "portId": "orch-io"
+      },
+      "type": "internal-api",
+      "label": "Post-Mortem Task"
+    },
+    {
+      "id": "mastra-to-enkrypt",
+      "source": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "safety-out"
+      },
+      "target": {
+        "nodeId": "enkrypt-ai-safety",
+        "portId": "api-in"
+      },
+      "type": "internal-api",
+      "label": null
+    },
+    {
+      "id": "agents-to-tools",
+      "source": {
+        "nodeId": "remediation-agent",
+        "portId": "out"
+      },
+      "target": {
+        "nodeId": "external-integrations-hub",
+        "portId": "api-in-out"
+      },
+      "type": "http",
+      "label": null
+    },
+    {
+      "id": "triage-to-tools",
+      "source": {
+        "nodeId": "triage-agent",
+        "portId": "out"
+      },
+      "target": {
+        "nodeId": "external-integrations-hub",
+        "portId": "api-in-out"
+      },
+      "type": "http",
+      "label": null
+    },
+    {
+      "id": "postmortem-to-tools",
+      "source": {
+        "nodeId": "post-mortem-agent",
+        "portId": "out"
+      },
+      "target": {
+        "nodeId": "external-integrations-hub",
+        "portId": "api-in-out"
+      },
+      "type": "http",
+      "label": null
+    },
+    {
+      "id": "dashboard-to-backend",
+      "source": {
+        "nodeId": "on-call-dashboard",
+        "portId": "api-in-out"
+      },
+      "target": {
+        "nodeId": "backend-api",
+        "portId": "client-io"
+      },
+      "type": "websocket",
+      "label": "REST/WS"
+    },
+    {
+      "id": "integrations-to-backend",
+      "source": {
+        "nodeId": "external-integrations-hub",
+        "portId": "webhook-out"
+      },
+      "target": {
+        "nodeId": "backend-api",
+        "portId": "webhook-in"
+      },
+      "type": "http",
+      "label": "Alert Webhooks"
+    },
+    {
+      "id": "backend-to-orch",
+      "source": {
+        "nodeId": "backend-api",
+        "portId": "orch-out"
+      },
+      "target": {
+        "nodeId": "mastra-orchestrator",
+        "portId": "api-in"
+      },
+      "type": "internal-api",
+      "label": "Trigger Workflow"
+    },
+    {
+      "id": "remediation-to-backend-approval",
+      "source": {
+        "nodeId": "remediation-agent",
+        "portId": "approval-io"
+      },
+      "target": {
+        "nodeId": "backend-api",
+        "portId": "approval-io"
+      },
+      "type": "internal-api",
+      "label": "Approval Request"
+    },
+    {
+      "id": "remediation-to-enkrypt",
+      "source": {
+        "nodeId": "remediation-agent",
+        "portId": "enkrypt-out"
+      },
+      "target": {
+        "nodeId": "enkrypt-ai-safety",
+        "portId": "eval-in-1"
+      },
+      "type": "internal-api",
+      "label": "Command Validation"
+    },
+    {
+      "id": "postmortem-to-enkrypt",
+      "source": {
+        "nodeId": "post-mortem-agent",
+        "portId": "enkrypt-out"
+      },
+      "target": {
+        "nodeId": "enkrypt-ai-safety",
+        "portId": "eval-in-2"
+      },
+      "type": "internal-api",
+      "label": "Hallucination Check"
+    },
+    {
+      "id": "triage-to-qdrant-incidents",
+      "source": {
+        "nodeId": "triage-agent",
+        "portId": "qdrant-out"
+      },
+      "target": {
+        "nodeId": "qdrant-incidents",
+        "portId": "in-out"
+      },
+      "type": "database",
+      "label": "Similarity Search"
+    },
+    {
+      "id": "remediation-to-qdrant-runbooks",
+      "source": {
+        "nodeId": "remediation-agent",
+        "portId": "qdrant-out"
+      },
+      "target": {
+        "nodeId": "qdrant-runbooks",
+        "portId": "in-out"
+      },
+      "type": "database",
+      "label": "Runbook Retrieval"
+    },
+    {
+      "id": "postmortem-to-qdrant-pm",
+      "source": {
+        "nodeId": "post-mortem-agent",
+        "portId": "qdrant-out"
+      },
+      "target": {
+        "nodeId": "qdrant-postmortems",
+        "portId": "in-out"
+      },
+      "type": "database",
+      "label": "Template Retrieval"
+    }
+  ],
+  "groups": [
+    {
+      "children": [
+        "on-call-dashboard"
+      ],
+      "id": "client-layer",
+      "label": "Client Layer"
+    },
+    {
+      "children": [
+        "backend-api",
+        "mastra-orchestrator"
+      ],
+      "id": "control-plane",
+      "label": "Control Plane & API"
+    },
+    {
+      "children": [
+        "triage-agent",
+        "remediation-agent",
+        "post-mortem-agent"
+      ],
+      "id": "agent-swarm",
+      "label": "Mastra Agent Swarm (TypeScript)"
+    },
+    {
+      "children": [
+        "qdrant-incidents",
+        "qdrant-runbooks",
+        "qdrant-postmortems"
+      ],
+      "id": "qdrant-cluster",
+      "label": "Qdrant Vector DB (Collections)"
+    },
+    {
+      "children": [
+        "enkrypt-ai-safety",
+        "external-integrations-hub"
+      ],
+      "id": "external-services",
+      "label": "Safety & Integrations"
+    }
+  ],
+  "metadata": {}
+}
