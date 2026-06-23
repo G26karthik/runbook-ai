@@ -47,6 +47,57 @@ Three specialised agents, orchestrated by Mastra as a single stateful workflow, 
 
 ---
 
+## 3.2 : Mermaid Diagram 
+
+```mermaid
+graph TD
+A["PagerDuty/Grafana Webhook"] --> B["Backend API"]
+B --> C["Mastra Orchestrator"]
+
+subgraph Agents [Mastra Agents]
+    D1["Triage Agent"]
+    D2["Remediation Agent"]
+    D3["Post-Mortem Agent"]
+end
+
+subgraph Storage [Knowledge Base]
+    F1["Qdrant Incidents"]
+    F2["Qdrant Runbooks"]
+    F3["Qdrant Postmortems"]
+end
+
+subgraph ThirdParty [Integrations & Safety]
+    E1["GitHub API"]
+    G1["Slack API"]
+    E2["Kubernetes/Datadog API"]
+    H1(Enkrypt AI<br>Command Validation)
+    H2(Enkrypt AI<br>Hallucination Check)
+end
+
+subgraph UI [Human in the Loop]
+    I1(On-Call Dashboard<br>Approval UI)
+    I2(On-Call Dashboard<br>Draft Editor)
+end
+
+C -- orchestrates --> D1
+D1 --> E1
+D1 --> F1
+D1 --> G1
+
+C -- orchestrates --> D2
+D2 --> F2
+D2 --> E2
+D2 --> H1
+D2 --> I1
+I1 --> C
+
+C -- orchestrates --> D3
+D3 --> F3
+D3 --> H2
+D3 --> I2
+```
+
+
 ## 4. User Journey
 
 ### Happy path
